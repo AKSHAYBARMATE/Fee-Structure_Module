@@ -1,6 +1,7 @@
 package com.schoolerp.feemodule.service;
 
 import com.schoolerp.feemodule.entity.FeeStructure;
+import com.schoolerp.feemodule.exception.CustomException;
 import com.schoolerp.feemodule.repository.FeeStructureRepository;
 import com.schoolerp.feemodule.request.FeeStructureRequest;
 import com.schoolerp.feemodule.repository.CommonMasterRepository;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -31,6 +33,24 @@ public class FeeStructureServiceImpl implements FeeStructureService {
     @Override
     public FeeStructureResponse createFeeStructure(FeeStructureRequest request) {
         logger.info("Creating new FeeStructure from request: {}", request);
+
+        // 🔐 Step 1: Check uniqueness
+        Optional<FeeStructure> existing = feeStructureRepository
+                .findByClassId_IdAndAcademicYear_IdAndIsDeletedFalse(
+                        request.getClassId().intValue(),
+                        request.getAcademicYearId().intValue()
+                );
+
+        if (existing.isPresent()) {
+            throw new CustomException(
+                    "Fee Structure already exists for the given class and academic year",
+                    "FEE_STRUCTURE_DUPLICATE",
+                    "Class ID: " + request.getClassId() + ", Academic Year ID: " + request.getAcademicYearId()
+            );
+        }
+
+
+
         FeeStructure feeStructure = new FeeStructure();
         // Fetch related CommonMaster entities
         feeStructure.setClassId(commonMasterRepository.findById(request.getClassId().intValue())
