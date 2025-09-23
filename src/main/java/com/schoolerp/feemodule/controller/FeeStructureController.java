@@ -4,7 +4,9 @@ package com.schoolerp.feemodule.controller;
 import com.schoolerp.feemodule.entity.FeeStructure;
 import com.schoolerp.feemodule.request.FeeStructureRequest;
 import com.schoolerp.feemodule.response.FeeStructureResponse;
+import com.schoolerp.feemodule.response.RecentTransactionDTO;
 import com.schoolerp.feemodule.response.StandardResponse;
+import com.schoolerp.feemodule.response.StudentFeeStatusDTO;
 import com.schoolerp.feemodule.service.FeeStructureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -94,4 +97,65 @@ public class FeeStructureController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/studentsFeeStatus")
+    public ResponseEntity<StandardResponse<Page<StudentFeeStatusDTO>>> getStudentsFeeStatus(
+            @RequestParam("academicYear") Integer academicYear,
+            @RequestParam(value = "classId", required = false) Integer classId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StudentFeeStatusDTO> resultPage = feeStructureService.getStudentsFeeStatus(academicYear, classId, pageable);
+
+        StandardResponse.ResponseMetadata metadata = StandardResponse.ResponseMetadata.builder()
+                .totalRecords(resultPage.getTotalElements())
+                .currentPage(resultPage.getNumber())
+                .pageSize(resultPage.getSize())
+                .totalPages(resultPage.getTotalPages())
+                .build();
+
+        StandardResponse<Page<StudentFeeStatusDTO>> response = StandardResponse.<Page<StudentFeeStatusDTO>>builder()
+                .success(true)
+                .message("Students fee status fetched successfully")
+                .data(resultPage)
+                .metadata(metadata)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+    @GetMapping("/recent-transactions")
+    public ResponseEntity<StandardResponse<Page<RecentTransactionDTO>>> getRecentTransactions(
+            @RequestParam Integer academicYear,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RecentTransactionDTO> resultPage = feeStructureService.getRecentTransactions(academicYear, pageable);
+
+        StandardResponse.ResponseMetadata metadata = StandardResponse.ResponseMetadata.builder()
+                .totalRecords(resultPage.getTotalElements())
+                .currentPage(resultPage.getNumber())
+                .pageSize(resultPage.getSize())
+                .totalPages(resultPage.getTotalPages())
+                .build();
+
+        StandardResponse<Page<RecentTransactionDTO>> response = StandardResponse.<Page<RecentTransactionDTO>>builder()
+                .success(true)
+                .message("Recent transactions fetched successfully")
+                .data(resultPage)
+                .metadata(metadata)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
 }

@@ -1,12 +1,18 @@
 package com.schoolerp.feemodule.service;
 
+import com.schoolerp.feemodule.entity.FeePayment;
 import com.schoolerp.feemodule.entity.FeeStructure;
+import com.schoolerp.feemodule.entity.Student;
 import com.schoolerp.feemodule.exception.CustomException;
+import com.schoolerp.feemodule.repository.FeePaymentRepository;
 import com.schoolerp.feemodule.repository.FeeStructureRepository;
+import com.schoolerp.feemodule.repository.StudentRepository;
 import com.schoolerp.feemodule.request.FeeStructureRequest;
 import com.schoolerp.feemodule.repository.CommonMasterRepository;
 import com.schoolerp.feemodule.response.FeeStructureMapper;
 import com.schoolerp.feemodule.response.FeeStructureResponse;
+import com.schoolerp.feemodule.response.RecentTransactionDTO;
+import com.schoolerp.feemodule.response.StudentFeeStatusDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +33,9 @@ public class FeeStructureServiceImpl implements FeeStructureService {
     private static final Logger logger = LoggerFactory.getLogger(FeeStructureServiceImpl.class);
     private final FeeStructureRepository feeStructureRepository;
     private final CommonMasterRepository commonMasterRepository;
+
+    private final FeePaymentRepository feePaymentRepository;
+    private final StudentRepository studentRepository;
 
     @Override
     public FeeStructureResponse createFeeStructure(FeeStructureRequest request) {
@@ -208,4 +215,48 @@ public class FeeStructureServiceImpl implements FeeStructureService {
         feeStructureRepository.save(feeStructure);
         logger.info("Soft deleted FeeStructure with ID: {}", id);
     }
+
+
+
+    @Override
+    public Page<RecentTransactionDTO> getRecentTransactions(Integer academicYear, Pageable pageable) {
+        Page<FeePayment> paymentsPage = feePaymentRepository.findByAcademicYearOrderByPaidAtDesc(academicYear, pageable);
+
+        return paymentsPage.map(payment -> RecentTransactionDTO.builder()
+                .paymentId(payment.getId())
+                .studentName(payment.getStudentId().getFirstName() + " " + payment.getStudentId().getLastName())
+                .netAmount(payment.getNetAmount())
+                .paymentMethod(payment.getPaymentMethod())
+                .transactionId(payment.getTransactionId())
+                .receiptNo(payment.getReceiptNo())
+                .paidAt(payment.getPaidAt())
+                .build()
+        );
+    }
+
+
+
+
+    @Override
+    public Page<StudentFeeStatusDTO> getStudentsFeeStatus(Integer academicYear, Integer classId, Pageable pageable) {
+        Page<Student> studentsPage = studentRepository.findStudentsByAcademicYearAndClass(academicYear, classId, pageable);
+
+        return studentsPage.map(student -> StudentFeeStatusDTO.builder()
+                .studentId(student.getId())
+                .admissionNo(student.getAdmissionNo())
+                .studentName(student.getFirstName() + " " + student.getLastName())
+                .academicYear(student.getAcademicYear())
+                .feeStatus(student.getFeesStatus().name())
+                .build()
+        );
+    }
+
+
+
+
+
+
+
+
+
 }

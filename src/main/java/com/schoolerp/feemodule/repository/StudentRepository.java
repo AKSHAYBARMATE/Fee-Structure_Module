@@ -49,6 +49,14 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             @Param("fromClass") Integer fromClass,
             @Param("fromSection") Integer fromSection);
 
-    List<Student> findAllByIdInAndIsDeletedFalse(List<Integer> ids);
 
+    @Query("SELECT s FROM Student s " +
+            "WHERE s.academicYear = :academicYear " +
+            "AND (:classId IS NULL OR s.classApplyingFor = :classId) " +
+            "AND s.isDeleted = false")
+    Page<Student> findStudentsByAcademicYearAndClass(
+            @Param("academicYear") Integer academicYear,
+            @Param("classId") Integer classId,
+            Pageable pageable
+    );
 }

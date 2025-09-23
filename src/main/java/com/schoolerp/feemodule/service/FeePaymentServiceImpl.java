@@ -8,7 +8,6 @@ import com.schoolerp.feemodule.mapper.FeePaymentMapper;
 import com.schoolerp.feemodule.repository.FeePaymentRepository;
 import com.schoolerp.feemodule.repository.FeeStructureRepository;
 import com.schoolerp.feemodule.repository.StudentRepository;
-import com.schoolerp.feemodule.request.FeeCategoryDto;
 import com.schoolerp.feemodule.request.FeePaymentRequest;
 import com.schoolerp.feemodule.response.FeePaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +57,7 @@ public class FeePaymentServiceImpl implements FeePaymentService {
                 .baseAmount(totalFee)
                 .discount(discount)
                 .lateFee(lateFee)
+                .academicYear(request.getAcademicYear())
                 .netAmount(finalAmount)  // Use the final calculated amount
                 .paymentMethod(request.getPaymentMethod())
                 .transactionId(request.getTransactionId())
@@ -87,6 +87,10 @@ public class FeePaymentServiceImpl implements FeePaymentService {
 
         // Save the fee payment and return a mapped response
         FeePayment savedFeePayment = feePaymentRepository.save(feePayment);
+
+        // Update student fee status
+        student.setFeesStatus(Student.FeesStatus.PAID);
+        studentRepository.save(student);
 
         // Map the saved FeePayment to FeePaymentResponse and return it
         return FeePaymentMapper.toResponse(savedFeePayment);

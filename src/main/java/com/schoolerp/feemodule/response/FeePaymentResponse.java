@@ -29,4 +29,5 @@ public class FeePaymentResponse {
     private LocalDate dueDate;
     private String remarks;
     private LocalDateTime paymentDate;
+    private Integer academicYear;
 }

@@ -25,4 +25,5 @@ public class FeePaymentRequest {
     private String receiptNumber;
     private LocalDate dueDate;
     private String remarks;
+    private Integer academicYear;
 }
