@@ -1,12 +1,12 @@
 services:
-  studentservice:
+  feeservice:
     build:
       context: .
       dockerfile: Dockerfile
-    image: studentservice:latest
-    container_name: studentservice
+    image: feeservice:latest
+    container_name: feeservice
     ports:
-      - "8084:8084"
+      - "8085:8085"
     networks:
       - updated_orgadmin_rmscadminnetwork
     environment:
