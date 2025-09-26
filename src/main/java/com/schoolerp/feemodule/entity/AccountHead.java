@@ -42,6 +42,7 @@ public class AccountHead {
         REVENUE,
         EXPENSE,
         ASSET,
-        LIABILITY
+        LIABILITY,
+        INCOME
     }
 }
