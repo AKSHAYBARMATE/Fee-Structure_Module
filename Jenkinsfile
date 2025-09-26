@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        COMPOSE_FILE = "docker-compose.uploading.yml"
-        REGISTRY_CONTAINER_NAME = "adminserviceregistry"
-        TARGET_SERVICE = "uploadingservice"
-        TARGET_CONTAINER_NAME = "configurationservice" // container_name from your compose file
-        TARGET_IMAGE_NAME = "configuration:latest" // image name from your compose file
+        COMPOSE_FILE = "docker-compose.feeservice.yml"
+        REGISTRY_CONTAINER_NAME = "serviceregistry"
+        TARGET_SERVICE = "feeservice"
+        TARGET_CONTAINER_NAME = "feeservice"
+        TARGET_IMAGE_NAME = "feeservice:latest"
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
         stage('Docker Version') {
             steps {
                 sh 'docker --version'
-                sh 'docker compose version'
+                sh 'docker compose --version'  // ✅ Use with hyphen
             }
         }
 
@@ -40,7 +40,7 @@ pipeline {
                         // Remove existing image
                         sh "docker rmi -f ${TARGET_IMAGE_NAME} || true"
 
-                        // Build and run the service
+                        // ✅ Use docker-compose (with hyphen) for build and up
                         sh "docker compose -f ${COMPOSE_FILE} build ${TARGET_SERVICE}"
                         sh "docker compose -f ${COMPOSE_FILE} up -d ${TARGET_SERVICE}"
                     } else {
