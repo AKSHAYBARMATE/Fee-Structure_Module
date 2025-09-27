@@ -20,7 +20,7 @@ public interface TransactionService {
             int size,
             String search,
             TransactionType type,
-            TransactionStatus status,Integer academicYearId
+            TransactionStatus status,Integer academicYearId,Long accountHeadId
     );
 
     Transaction createTransaction(TransactionRequest request);

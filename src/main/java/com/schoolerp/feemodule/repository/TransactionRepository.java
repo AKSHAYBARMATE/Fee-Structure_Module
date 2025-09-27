@@ -37,4 +37,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Optional<Transaction> findByTransactionId(String transactionId);
 
     boolean existsByTransactionIdAndIsDeletedFalse(String transactionId);
+
+    Page<Transaction> findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatusAndAcademicYearAndAccountHeadId(String search, Transaction.TransactionType type, Transaction.TransactionStatus status, Integer academicYear, Long accountHeadId, Pageable pageable);
+
+    Page<Transaction> findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndAcademicYearAndAccountHeadId(String search, Integer academicYear, Long accountHeadId, Pageable pageable);
+
+    Page<Transaction> findByIsDeletedFalseAndTypeAndStatusAndAcademicYearAndAccountHeadId(Transaction.TransactionType type, Transaction.TransactionStatus status, Integer academicYear, Long accountHeadId, Pageable pageable);
+
+    Page<Transaction> findByIsDeletedFalseAndTypeAndAcademicYearAndAccountHeadId(Transaction.TransactionType type, Integer academicYear, Long accountHeadId, Pageable pageable);
+
+    Page<Transaction> findByIsDeletedFalseAndStatusAndAcademicYearAndAccountHeadId(Transaction.TransactionStatus status, Integer academicYear, Long accountHeadId, Pageable pageable);
+
+    Page<Transaction> findByIsDeletedFalseAndAcademicYearAndAccountHeadId(Integer academicYear, Long accountHeadId, Pageable pageable);
+
+    Page<Transaction> findByIsDeletedFalseAndAccountHeadId(Long accountHeadId, Pageable pageable);
 }

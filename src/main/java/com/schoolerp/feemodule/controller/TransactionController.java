@@ -53,9 +53,10 @@ public class TransactionController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) TransactionType type,
             @RequestParam(required = false) TransactionStatus status,
-            @RequestParam(required = false) Integer academicYear
+            @RequestParam(required = false) Integer academicYear,
+            @RequestParam(required = false) Long accountHeadId
     ) {
-        TransactionSummaryResponse summary = transactionService.getAllTransactions(page, size, search, type, status, academicYear);
+        TransactionSummaryResponse summary = transactionService.getAllTransactions(page, size, search, type, status, academicYear,accountHeadId);
 
         StandardResponse<TransactionSummaryResponse> response = StandardResponse.<TransactionSummaryResponse>builder()
                 .success(true)
