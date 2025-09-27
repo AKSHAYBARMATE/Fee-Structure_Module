@@ -93,5 +93,23 @@ public class AccountHeadController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("getAccountHeadById/{id}")
+    public ResponseEntity<StandardResponse<AccountHeadDTO>> getAccountHeadById(@PathVariable Long id) {
+        AccountHeadDTO accountHead = accountHeadService.getAccountHeadById(id);
+
+        StandardResponse<AccountHeadDTO> response = StandardResponse.<AccountHeadDTO>builder()
+                .success(true)
+                .message("Account head fetched successfully")
+                .data(accountHead)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
 }
 

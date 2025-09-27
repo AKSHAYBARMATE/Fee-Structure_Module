@@ -14,4 +14,6 @@ public interface AccountHeadService {
     AccountHeadDTO updateAccountHead(Long id, AccountHeadDTO dto);
 
     void deleteAccountHead(Long id);
+
+    AccountHeadDTO getAccountHeadById(Long id);
 }

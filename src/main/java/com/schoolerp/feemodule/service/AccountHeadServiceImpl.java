@@ -6,6 +6,7 @@ import com.schoolerp.feemodule.exception.CustomException;
 import com.schoolerp.feemodule.repository.AccountHeadRepository;
 import com.schoolerp.feemodule.response.AccountHeadDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountHeadServiceImpl implements AccountHeadService {
 
     private final AccountHeadRepository accountHeadRepository;
@@ -94,6 +96,22 @@ public class AccountHeadServiceImpl implements AccountHeadService {
         accountHeadRepository.save(existing);
     }
 
+
+    @Override
+    public AccountHeadDTO getAccountHeadById(Long id) {
+        log.info("Fetching AccountHead with ID: {}", id);
+
+        AccountHead accountHead = accountHeadRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("AccountHead not found with ID: {}", id);
+                    return new RuntimeException("AccountHead not found with id: " + id);
+                });
+
+        log.debug("Fetched AccountHead details: {}", accountHead);
+        return toDTO(accountHead);
+    }
+
+
     private AccountHeadDTO toDTO(AccountHead entity) {
         return AccountHeadDTO.builder()
                 .id(entity.getId())
@@ -104,4 +122,6 @@ public class AccountHeadServiceImpl implements AccountHeadService {
                 .parentAccountId(entity.getParentAccount() != null ? entity.getParentAccount().getId() : null)
                 .build();
     }
+
+
 }
