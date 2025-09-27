@@ -39,7 +39,7 @@ public class AccountHeadController {
 
     @GetMapping("/getAccountHeadsByType")
     public ResponseEntity<StandardResponse<Page<AccountHeadDTO>>> getAccountHeadsByType(
-            @RequestParam AccountHead.AccountType accountType,
+            @RequestParam String accountType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 

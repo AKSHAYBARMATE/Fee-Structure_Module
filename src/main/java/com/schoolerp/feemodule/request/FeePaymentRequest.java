@@ -26,4 +26,5 @@ public class FeePaymentRequest {
     private LocalDate dueDate;
     private String remarks;
     private Integer academicYear;
+    private Long accountHeadId;
 }

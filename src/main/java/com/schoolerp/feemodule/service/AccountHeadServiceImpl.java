@@ -25,7 +25,7 @@ public class AccountHeadServiceImpl implements AccountHeadService {
         AccountHead accountHead = AccountHead.builder()
                 .accountName(dto.getAccountName())
                 .accountCode(dto.getAccountCode())
-                .accountType(AccountHead.AccountType.valueOf(dto.getAccountType()))
+                .accountType(dto.getAccountType())
                 .description(dto.getDescription())
                 .isDeleted(false)
                 .build();
@@ -43,7 +43,7 @@ public class AccountHeadServiceImpl implements AccountHeadService {
 
 
     @Override
-    public Page<AccountHeadDTO> getAccountHeadsByType(AccountHead.AccountType accountType, Pageable pageable) {
+    public Page<AccountHeadDTO> getAccountHeadsByType(String accountType, Pageable pageable) {
         Page<AccountHead> page = accountHeadRepository.findAllByIsDeletedFalseAndAccountType(accountType, pageable);
         return page.map(this::toDTO);
     }
@@ -66,7 +66,7 @@ public class AccountHeadServiceImpl implements AccountHeadService {
 
         existing.setAccountName(dto.getAccountName());
         existing.setAccountCode(dto.getAccountCode());
-        existing.setAccountType(AccountHead.AccountType.valueOf(dto.getAccountType()));
+        existing.setAccountType(dto.getAccountType());
         existing.setDescription(dto.getDescription());
         existing.setIsDeleted(false);
 
@@ -117,7 +117,7 @@ public class AccountHeadServiceImpl implements AccountHeadService {
                 .id(entity.getId())
                 .accountName(entity.getAccountName())
                 .accountCode(entity.getAccountCode())
-                .accountType(entity.getAccountType().name())
+                .accountType(entity.getAccountType())
                 .description(entity.getDescription())
                 .parentAccountId(entity.getParentAccount() != null ? entity.getParentAccount().getId() : null)
                 .build();

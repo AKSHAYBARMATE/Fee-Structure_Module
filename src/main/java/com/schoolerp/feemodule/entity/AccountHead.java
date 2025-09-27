@@ -24,9 +24,7 @@ public class AccountHead {
     @Column(name = "account_code", nullable = false, unique = true)
     private String accountCode;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "account_type", nullable = false)
-    private AccountType accountType;
+    private String accountType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_account_id")
@@ -37,12 +35,4 @@ public class AccountHead {
 
     private Boolean isDeleted;
 
-
-    public enum AccountType {
-        REVENUE,
-        EXPENSE,
-        ASSET,
-        LIABILITY,
-        INCOME
-    }
 }

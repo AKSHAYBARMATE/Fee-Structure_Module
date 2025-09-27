@@ -1,21 +1,18 @@
 package com.schoolerp.feemodule.service;
 
-import com.schoolerp.feemodule.entity.FeePayment;
-import com.schoolerp.feemodule.entity.FeePaymentCategory;
-import com.schoolerp.feemodule.entity.FeeStructure;
-import com.schoolerp.feemodule.entity.Student;
+import com.schoolerp.feemodule.entity.*;
 import com.schoolerp.feemodule.mapper.FeePaymentMapper;
-import com.schoolerp.feemodule.repository.FeePaymentRepository;
-import com.schoolerp.feemodule.repository.FeeStructureRepository;
-import com.schoolerp.feemodule.repository.StudentRepository;
+import com.schoolerp.feemodule.repository.*;
 import com.schoolerp.feemodule.request.FeePaymentRequest;
 import com.schoolerp.feemodule.response.FeePaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,9 +27,15 @@ public class FeePaymentServiceImpl implements FeePaymentService {
     @Autowired
     private FeeStructureRepository feeStructureRepository;
 
+    @Autowired
+    private AccountHeadRepository accountHeadRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
     public FeePaymentResponse collectFee(FeePaymentRequest request) {
         // Fetch the student and fee structure
-        Student student = studentRepository.findById(request.getStudentId())
+        Student student = studentRepository.findByIdAndIsDeletedFalse(request.getStudentId())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         FeeStructure feeStructure = feeStructureRepository.findById(request.getFeeStructureId())
@@ -64,7 +67,8 @@ public class FeePaymentServiceImpl implements FeePaymentService {
                 .receiptNo(request.getReceiptNumber())
                 .dueDate(request.getDueDate())
                 .paymentRemarks(request.getRemarks())
-                .paidAt(LocalDateTime.now())  // Set the current time for payment
+                .paidAt(LocalDateTime.now())
+                .accountHeadId(request.getAccountHeadId())
                 .build();
 
         // Map selected categories from FeeCategoryDto to FeePaymentCategory
@@ -92,7 +96,25 @@ public class FeePaymentServiceImpl implements FeePaymentService {
         student.setFeesStatus(Student.FeesStatus.PAID);
         studentRepository.save(student);
 
-        // Map the saved FeePayment to FeePaymentResponse and return it
+
+        // ✅ Create Transaction entry linked to AccountHead
+        AccountHead accountHead = accountHeadRepository.findByIdAndIsDeletedFalse(request.getAccountHeadId())
+                .orElseThrow(() -> new RuntimeException("AccountHead not found with ID: " + request.getAccountHeadId()));
+
+        Transaction transaction = Transaction.builder()
+                .transactionId(request.getTransactionId())
+                .accountHead(accountHead)
+                .type(Transaction.TransactionType.CREDIT)   // 💡 usually CREDIT for fee collection
+                .amount(finalAmount)
+                .transactionDate(LocalDate.from(LocalDateTime.now()))
+                .academicYear(request.getAcademicYear())
+                .description("Fee collected for student: " + student.getFirstName() + " " + student.getLastName())
+                .status(Transaction.TransactionStatus.APPROVED) // or from request if flexible
+                .isDeleted(false)
+                .build();
+
+        this.transactionRepository.save(transaction);
+
         return FeePaymentMapper.toResponse(savedFeePayment);
     }
 

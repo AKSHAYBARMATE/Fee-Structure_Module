@@ -13,5 +13,5 @@ public interface AccountHeadRepository extends JpaRepository<AccountHead,Long> {
 
     Page<AccountHead> findAllByIsDeletedFalse(Pageable pageable);
 
-    Page<AccountHead> findAllByIsDeletedFalseAndAccountType(AccountHead.AccountType accountType, Pageable pageable);
+    Page<AccountHead> findAllByIsDeletedFalseAndAccountType(String accountType, Pageable pageable);
 }

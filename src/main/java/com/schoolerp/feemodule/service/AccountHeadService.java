@@ -9,7 +9,7 @@ public interface AccountHeadService {
     AccountHeadDTO createAccountHead(AccountHeadDTO dto);
 
 
-    Page<AccountHeadDTO> getAccountHeadsByType(AccountHead.AccountType accountType, Pageable pageable);
+    Page<AccountHeadDTO> getAccountHeadsByType(String accountType, Pageable pageable);
 
     AccountHeadDTO updateAccountHead(Long id, AccountHeadDTO dto);
 

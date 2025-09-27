@@ -44,4 +44,5 @@ public class FeePayment {
     private String paymentRemarks;
     private LocalDateTime paidAt;
     private Integer academicYear;
+    private Long accountHeadId;
 }
