@@ -71,7 +71,8 @@ public class TransactionServiceImpl implements TransactionService {
             TransactionType type,
             TransactionStatus status,
             Integer academicYear,
-            Long accountHeadId // new filter
+            Long accountHeadId,
+            Integer studentId
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Transaction> transactions;
@@ -81,75 +82,90 @@ public class TransactionServiceImpl implements TransactionService {
         boolean hasStatus = (status != null);
         boolean hasAcademicYear = (academicYear != null);
         boolean hasAccountHead = (accountHeadId != null);
+        boolean hasStudent = (studentId != null);
 
-        // Filter logic
-        if (hasSearch && hasType && hasStatus && hasAcademicYear && hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatusAndAcademicYearAndAccountHeadId(
-                            search, type, status, academicYear, accountHeadId, pageable);
-        } else if (hasSearch && hasAcademicYear && hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndAcademicYearAndAccountHeadId(
-                            search, academicYear, accountHeadId, pageable);
-        } else if (hasType && hasStatus && hasAcademicYear && hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndTypeAndStatusAndAcademicYearAndAccountHeadId(
-                            type, status, academicYear, accountHeadId, pageable);
-        } else if (hasType && hasAcademicYear && hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndTypeAndAcademicYearAndAccountHeadId(
-                            type, academicYear, accountHeadId, pageable);
-        } else if (hasStatus && hasAcademicYear && hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndStatusAndAcademicYearAndAccountHeadId(
-                            status, academicYear, accountHeadId, pageable);
-        } else if (hasAcademicYear && hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndAcademicYearAndAccountHeadId(academicYear, accountHeadId, pageable);
-        } else if (hasAccountHead) {
-            transactions = transactionRepository
-                    .findByIsDeletedFalseAndAccountHeadId(accountHeadId, pageable);
+        if (hasStudent) {
+            // Special case: Join Transaction and FeePayment
+            transactions = transactionRepository.findTransactionsByStudentIdAndFilters(
+                    studentId,
+                    accountHeadId,
+                    academicYear,
+                    type,
+                    status,
+                    search,
+                    pageable
+            );
         } else {
-            // existing filters without accountHead
-            if (hasSearch && hasType && hasStatus && hasAcademicYear) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatusAndAcademicYear(
-                                search, type, status, academicYear, pageable);
-            } else if (hasSearch && hasAcademicYear) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndAcademicYear(search, academicYear, pageable);
-            } else if (hasType && hasStatus && hasAcademicYear) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTypeAndStatusAndAcademicYear(type, status, academicYear, pageable);
-            } else if (hasType && hasAcademicYear) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTypeAndAcademicYear(type, academicYear, pageable);
-            } else if (hasStatus && hasAcademicYear) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndStatusAndAcademicYear(status, academicYear, pageable);
-            } else if (hasAcademicYear) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndAcademicYear(academicYear, pageable);
-            } else if (hasSearch && hasType && hasStatus) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatus(search, type, status, pageable);
-            } else if (hasSearch) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTransactionIdContainingIgnoreCase(search, pageable);
-            } else if (hasType && hasStatus) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndTypeAndStatus(type, status, pageable);
-            } else if (hasType) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndType(type, pageable);
-            } else if (hasStatus) {
-                transactions = transactionRepository
-                        .findByIsDeletedFalseAndStatus(status, pageable);
-            } else {
-                transactions = transactionRepository.findByIsDeletedFalse(pageable);
-            }
-        }
 
+            // Filter logic
+            if (hasSearch && hasType && hasStatus && hasAcademicYear && hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatusAndAcademicYearAndAccountHeadId(
+                                search, type, status, academicYear, accountHeadId, pageable);
+            } else if (hasSearch && hasAcademicYear && hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndAcademicYearAndAccountHeadId(
+                                search, academicYear, accountHeadId, pageable);
+            } else if (hasType && hasStatus && hasAcademicYear && hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndTypeAndStatusAndAcademicYearAndAccountHeadId(
+                                type, status, academicYear, accountHeadId, pageable);
+            } else if (hasType && hasAcademicYear && hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndTypeAndAcademicYearAndAccountHeadId(
+                                type, academicYear, accountHeadId, pageable);
+            } else if (hasStatus && hasAcademicYear && hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndStatusAndAcademicYearAndAccountHeadId(
+                                status, academicYear, accountHeadId, pageable);
+            } else if (hasAcademicYear && hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndAcademicYearAndAccountHeadId(academicYear, accountHeadId, pageable);
+            } else if (hasAccountHead) {
+                transactions = transactionRepository
+                        .findByIsDeletedFalseAndAccountHeadId(accountHeadId, pageable);
+            } else {
+                // existing filters without accountHead
+                if (hasSearch && hasType && hasStatus && hasAcademicYear) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatusAndAcademicYear(
+                                    search, type, status, academicYear, pageable);
+                } else if (hasSearch && hasAcademicYear) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndAcademicYear(search, academicYear, pageable);
+                } else if (hasType && hasStatus && hasAcademicYear) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTypeAndStatusAndAcademicYear(type, status, academicYear, pageable);
+                } else if (hasType && hasAcademicYear) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTypeAndAcademicYear(type, academicYear, pageable);
+                } else if (hasStatus && hasAcademicYear) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndStatusAndAcademicYear(status, academicYear, pageable);
+                } else if (hasAcademicYear) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndAcademicYear(academicYear, pageable);
+                } else if (hasSearch && hasType && hasStatus) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTransactionIdContainingIgnoreCaseAndTypeAndStatus(search, type, status, pageable);
+                } else if (hasSearch) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTransactionIdContainingIgnoreCase(search, pageable);
+                } else if (hasType && hasStatus) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndTypeAndStatus(type, status, pageable);
+                } else if (hasType) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndType(type, pageable);
+                } else if (hasStatus) {
+                    transactions = transactionRepository
+                            .findByIsDeletedFalseAndStatus(status, pageable);
+                } else {
+                    transactions = transactionRepository.findByIsDeletedFalse(pageable);
+                }
+            }
+
+        }
         // Mapping and summary
         List<TransactionResponse> transactionResponses = transactions.getContent().stream()
                 .map(TransactionMapper::toResponse)
