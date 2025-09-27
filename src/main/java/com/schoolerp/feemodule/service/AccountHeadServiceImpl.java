@@ -44,7 +44,16 @@ public class AccountHeadServiceImpl implements AccountHeadService {
 
     @Override
     public Page<AccountHeadDTO> getAccountHeadsByType(String accountType, Pageable pageable) {
-        Page<AccountHead> page = accountHeadRepository.findAllByIsDeletedFalseAndAccountType(accountType, pageable);
+        Page<AccountHead> page;
+
+        if (accountType != null && !accountType.isEmpty()) {
+            // Filter by account type if provided
+            page = accountHeadRepository.findAllByIsDeletedFalseAndAccountType(accountType, pageable);
+        } else {
+            // Return all non-deleted account heads if type is not provided
+            page = accountHeadRepository.findAllByIsDeletedFalse(pageable);
+        }
+
         return page.map(this::toDTO);
     }
 

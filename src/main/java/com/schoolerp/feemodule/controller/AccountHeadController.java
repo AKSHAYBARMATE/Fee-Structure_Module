@@ -39,7 +39,7 @@ public class AccountHeadController {
 
     @GetMapping("/getAccountHeadsByType")
     public ResponseEntity<StandardResponse<Page<AccountHeadDTO>>> getAccountHeadsByType(
-            @RequestParam String accountType,
+            @RequestParam(required = false) String accountType, // optional
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -63,6 +63,7 @@ public class AccountHeadController {
 
         return ResponseEntity.ok(response);
     }
+
 
     @PutMapping("updateAccountById/{id}")
     public ResponseEntity<StandardResponse<AccountHeadDTO>> updateAccountHead(
