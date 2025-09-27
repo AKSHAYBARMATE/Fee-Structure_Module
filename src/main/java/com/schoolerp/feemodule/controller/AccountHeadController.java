@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/account-heads")
+@RequestMapping("/api/v1/fee-structures-module")
 @RequiredArgsConstructor
 public class AccountHeadController {
 
