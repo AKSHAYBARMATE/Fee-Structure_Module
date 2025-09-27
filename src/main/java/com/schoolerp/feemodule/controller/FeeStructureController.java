@@ -101,7 +101,7 @@ public class FeeStructureController {
 
     @GetMapping("/studentsFeeStatus")
     public ResponseEntity<StandardResponse<Page<StudentFeeStatusDTO>>> getStudentsFeeStatus(
-            @RequestParam("academicYear") Integer academicYear,
+            @RequestParam(required = false) Integer academicYear,
             @RequestParam(value = "classId", required = false) Integer classId,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
