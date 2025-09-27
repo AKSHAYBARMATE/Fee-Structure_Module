@@ -64,7 +64,7 @@ public class AccountHeadController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("getAccountById/{id}")
+    @PutMapping("updateAccountById/{id}")
     public ResponseEntity<StandardResponse<AccountHeadDTO>> updateAccountHead(
             @PathVariable Long id,
             @RequestBody AccountHeadDTO dto
