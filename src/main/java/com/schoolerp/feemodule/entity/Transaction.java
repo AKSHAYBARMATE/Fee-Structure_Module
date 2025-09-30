@@ -21,7 +21,6 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
     private String transactionId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -29,23 +28,21 @@ public class Transaction {
     private AccountHead accountHead;  // 🔗 Relation to AccountHead
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private TransactionType type; // CREDIT, DEBIT
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
     @Column(nullable = false)
     private LocalDate transactionDate;
 
-    @Column(nullable = false)
     private Integer academicYear;
 
     @Column(length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private TransactionStatus status; // APPROVED, PENDING, REJECTED
 
     private Boolean isDeleted;
