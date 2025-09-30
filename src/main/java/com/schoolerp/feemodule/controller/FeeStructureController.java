@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/fee-structures-module")
+@RequestMapping("/sms/api/v1/fee-structures-module")
 @RequiredArgsConstructor
 public class FeeStructureController {
 
