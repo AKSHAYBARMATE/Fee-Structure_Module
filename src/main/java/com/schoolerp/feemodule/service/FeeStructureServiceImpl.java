@@ -59,15 +59,26 @@ public class FeeStructureServiceImpl implements FeeStructureService {
 
 
         FeeStructure feeStructure = new FeeStructure();
-        // Fetch related CommonMaster entities
-        feeStructure.setClassId(commonMasterRepository.findById(request.getClassId().intValue())
-                .orElseThrow(() -> new RuntimeException("Class not found with id " + request.getClassId())));
-        feeStructure.setSectionId(commonMasterRepository.findById(request.getSectionId().intValue())
-                .orElseThrow(() -> new RuntimeException("Section not found with id " + request.getSectionId())));
-        feeStructure.setAcademicYear(commonMasterRepository.findById(request.getAcademicYearId().intValue())
-                .orElseThrow(() -> new RuntimeException("Academic Year not found with id " + request.getAcademicYearId())));
-        feeStructure.setPaymentFrequency(commonMasterRepository.findById(request.getPaymentFrequencyId().intValue())
-                .orElseThrow(() -> new RuntimeException("Payment Frequency not found with id " + request.getPaymentFrequencyId())));
+        if (request.getClassId() != null) {
+            commonMasterRepository.findById(request.getClassId().intValue())
+                    .ifPresent(feeStructure::setClassId);
+        }
+
+        if (request.getSectionId() != null) {
+            commonMasterRepository.findById(request.getSectionId().intValue())
+                    .ifPresent(feeStructure::setSectionId);
+        }
+
+        if (request.getAcademicYearId() != null) {
+            commonMasterRepository.findById(request.getAcademicYearId().intValue())
+                    .ifPresent(feeStructure::setAcademicYear);
+        }
+
+        if (request.getPaymentFrequencyId() != null) {
+            commonMasterRepository.findById(request.getPaymentFrequencyId().intValue())
+                    .ifPresent(feeStructure::setPaymentFrequency);
+        }
+
         // Set simple fields
         feeStructure.setFeeStructureName(request.getFeeStructureName());
         feeStructure.setTuitionFee(request.getTuitionFee());

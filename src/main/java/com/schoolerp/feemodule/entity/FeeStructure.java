@@ -20,22 +20,22 @@ public class FeeStructure {
 
     // Instead of storing text, reference to master table (class, section)
     @ManyToOne
-    @JoinColumn(name = "class_id", nullable = false)
+    @JoinColumn(name = "class_id")
     private CommonMaster classId;
 
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
+    @JoinColumn(name = "section_id")
     private CommonMaster sectionId;
 
     @ManyToOne
-    @JoinColumn(name = "academic_year_id", nullable = false)
+    @JoinColumn(name = "academic_year_id")
     private CommonMaster academicYear;   // e.g. "2024-25"
 
-    @Column(name = "fee_structure_name", nullable = false)
+    @Column(name = "fee_structure_name")
     private String feeStructureName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_frequency_id", nullable = false)
+    @JoinColumn(name = "payment_frequency_id")
     private CommonMaster paymentFrequency;
 
     private BigDecimal tuitionFee;
